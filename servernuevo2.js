@@ -3,19 +3,24 @@ const cors = require("cors");
 const fetch = require("node-fetch");
 
 const app = express();
-app.use(cors());
 app.use(express.json());
+
+// 🔧 Configuración de CORS: permite peticiones desde tu Moodle online
+app.use(cors({
+  origin: "https://virtualacademy.mylanguagecoach.net", // dominio de tu Moodle
+  methods: ["GET","POST"],
+  credentials: true
+}));
 
 // Ruta de prueba
 app.get("/ping", (req, res) => {
-  res.send("Servidor activo en puerto 3000");
+  res.send("Servidor activo en Render con CORS habilitado");
 });
 
 // Ruta principal del chatbot
 app.post("/chat", async (req, res) => {
   console.log("Mensaje recibido:", req.body);
 
-  //const { message } = req.body;
   const { userId, message } = req.body;
 
   try {
@@ -30,12 +35,11 @@ app.post("/chat", async (req, res) => {
         messages: [
           {
             role: "system",
-            content: "Eres profesor de inglés virtual. Responde de forma clara, educativa y motivadora,siempre en ingles, propon temas e inicia conversaciones."
+            content: "Eres profesor de inglés virtual. Responde de forma clara, educativa y motivadora, siempre en inglés, propon temas e inicia conversaciones."
           },
           {
             role: "user",
-            //content: message
-             content: `UserId: ${userId}\nMessage: ${message}`
+            content: `UserId: ${userId}\nMessage: ${message}`
           }
         ],
         max_tokens: 80,
@@ -51,6 +55,7 @@ app.post("/chat", async (req, res) => {
   }
 });
 
-app.listen(3000, () => {
-  console.log("Servidor escuchando en http://localhost:3000");
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`Servidor escuchando en puerto ${PORT}`);
 });
