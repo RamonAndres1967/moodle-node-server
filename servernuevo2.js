@@ -9,7 +9,7 @@ app.use(express.json());
 app.use(cors({
     origin: [
     "http://localhost",                       // tu Moodle local
-    "https://virtualacademy.mylanguagecoach.net" // tu Moodle online
+    "https://virtualacademy.mylanguagecoach.net/" // tu Moodle online2
   ],
   methods: ["GET","POST"],
   credentials: true
@@ -62,4 +62,5 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Servidor escuchando en puerto ${PORT}`);
 });
+
 
