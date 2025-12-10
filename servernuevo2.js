@@ -7,7 +7,10 @@ app.use(express.json());
 
 // 🔧 Configuración de CORS: permite peticiones desde tu Moodle online
 app.use(cors({
-  origin: "https://virtualacademy.mylanguagecoach.net", // dominio de tu Moodle
+    origin: [
+    "http://localhost",                       // tu Moodle local
+    "https://virtualacademy.mylanguagecoach.net" // tu Moodle online
+  ],
   methods: ["GET","POST"],
   credentials: true
 }));
@@ -59,3 +62,4 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Servidor escuchando en puerto ${PORT}`);
 });
+
