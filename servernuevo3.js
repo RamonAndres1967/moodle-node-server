@@ -5,19 +5,12 @@ const fetch = require("node-fetch");
 const app = express();
 app.use(express.json());
 
-// 🔧 Configuración de CORS: permite peticiones desde tu Moodle online
-app.use(cors({
-  origin: [
-    "http://localhost",                         // Moodle local
-    "https://virtualacademy.mylanguagecoach.net" // Moodle online
-  ],
-  methods: ["GET","POST"],
-  credentials: true
-}));
+// 🔧 Configuración de CORS: abierto a todos los orígenes
+app.use(cors());
 
 // Ruta de prueba
 app.get("/ping", (req, res) => {
-  res.send("Servidor activo en Render con CORS habilitado");
+  res.send("Servidor activo en Render con CORS abierto");
 });
 
 // Ruta principal del chatbot
