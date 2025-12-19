@@ -49,6 +49,7 @@ app.post("/stt", upload.single("audio"), async (req, res) => {
   contentType: "audio/webm"
 });
 formData.append("model", "whisper-1");
+formData.append("language", "en");   // 🔥 Fuerza inglés SIEMPRE
 
 
     const response = await fetch("https://api.openai.com/v1/audio/transcriptions", {
