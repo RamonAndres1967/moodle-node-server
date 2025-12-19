@@ -41,9 +41,14 @@ app.post("/stt", upload.single("audio"), async (req, res) => {
 
     // Crear form-data para enviar a OpenAI
     const formData = new FormData();
-    formData.append("file", fs.createReadStream(filePath));
+   // formData.append("file", fs.createReadStream(filePath));
    // formData.append("model", "gpt-4o-mini-tts"); // Whisper STT
-    formData.append("model", "whisper-1");
+    //formData.append("model", "whisper-1");
+    formData.append("file", fs.createReadStream(filePath), {
+  filename: "audio.webm",
+  contentType: "audio/webm"
+});
+formData.append("model", "whisper-1");
 
 
     const response = await fetch("https://api.openai.com/v1/audio/transcriptions", {
