@@ -10,9 +10,22 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// ------------------ BASE DE DATOS (PERSISTENTE EN RENDER) ------------------
-const DB_PATH = "/var/data/usage.db";  // 🔥 Ruta persistente
-const db = new sqlite3.Database(DB_PATH);
+// ------------------ CREAR CARPETA PERSISTENTE EN RENDER ------------------
+const DATA_DIR = "/var/data";
+if (!fs.existsSync(DATA_DIR)) {
+  fs.mkdirSync(DATA_DIR, { recursive: true });
+  console.log("Carpeta /var/data creada");
+}
+
+// ------------------ BASE DE DATOS PERSISTENTE ------------------
+const DB_PATH = "/var/data/usage.db";
+const db = new sqlite3.Database(DB_PATH, (err) => {
+  if (err) {
+    console.error("Error abriendo SQLite:", err);
+  } else {
+    console.log("SQLite cargado desde:", DB_PATH);
+  }
+});
 
 db.run(`
   CREATE TABLE IF NOT EXISTS usage (
@@ -122,6 +135,30 @@ app.post("/ttsTime", (req, res) => {
       );
 
       res.json({ ok: true, total: newTotal });
+    }
+  );
+});
+
+// ------------------ ENDPOINT ADMIN: VER USO DE TODOS LOS ALUMNOS ------------------
+app.get("/admin/usage", (req, res) => {
+  const today = getToday();
+
+  db.all(
+    "SELECT userId, seconds FROM usage WHERE date = ? ORDER BY seconds DESC",
+    [today],
+    (err, rows) => {
+      if (err) {
+        console.error(err);
+        return res.status(500).json({ error: "Database error" });
+      }
+
+      const result = rows.map(r => ({
+        userId: r.userId,
+        usedSeconds: Math.floor(r.seconds),
+        remainingSeconds: Math.max(300 - Math.floor(r.seconds), 0)
+      }));
+
+      res.json(result);
     }
   );
 });
