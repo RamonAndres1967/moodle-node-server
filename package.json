@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node servernuevo4STT.js"
+    "start": "node servernuevo5STT.js"
   },
   "keywords": [],
   "author": "",
