@@ -2,18 +2,18 @@
   "name": "chatbot-server",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "servernuevo5STT.js",
   "scripts": {
     "start": "node servernuevo5STT.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "type": "commonjs",
+  "type": "module",
   "dependencies": {
     "cors": "^2.8.5",
     "express": "^5.2.1",
-    "node-fetch": "^2.7.0",
+    "node-fetch": "^3.3.2",
     "sqlite3": "^5.1.6",
     "multer": "1.4.5-lts.1",
     "form-data": "^4.0.0"
