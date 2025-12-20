@@ -10,15 +10,10 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// ------------------ CREAR CARPETA PERSISTENTE EN RENDER ------------------
-const DATA_DIR = "/var/data";
-if (!fs.existsSync(DATA_DIR)) {
-  fs.mkdirSync(DATA_DIR, { recursive: true });
-  console.log("Carpeta /var/data creada");
-}
-
 // ------------------ BASE DE DATOS PERSISTENTE ------------------
+// 🔥 NO crear /var/data manualmente → Render lo hace automáticamente
 const DB_PATH = "/var/data/usage.db";
+
 const db = new sqlite3.Database(DB_PATH, (err) => {
   if (err) {
     console.error("Error abriendo SQLite:", err);
