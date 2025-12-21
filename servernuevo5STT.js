@@ -51,6 +51,7 @@ app.post("/stt", upload.single("audio"), async (req, res) => {
     });
 
     const data = await openaiRes.json();
+    console.log("STT OpenAI response:", data);
     fs.unlinkSync(filePath);
 
     res.json({ text: data.text || "" });
@@ -94,6 +95,7 @@ app.post("/chat", async (req, res) => {
       });
 
       const data = await openaiRes.json();
+      console.log("CHAT OpenAI response:", data);
 
       res.json({
         reply: data.choices?.[0]?.message?.content || "Error",
