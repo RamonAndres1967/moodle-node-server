@@ -87,6 +87,7 @@ app.post("/chat", async (req, res) => {
         },
         body: JSON.stringify({
           model: "gpt-4.1",
+          max_tokens: 100,   // 🔥 Límite de tokens en la respuesta
           messages: [
             { role: "system", content: "You are an English teacher." },
             { role: "user", content: message }
