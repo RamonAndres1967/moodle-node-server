@@ -35,6 +35,15 @@
         "What are the pros and cons?"
       ]
     },
+    "wrapup_continue": {
+      "description": "Keep the conversation going with short, simple follow-up questions when time remains.",
+      "examples": [
+        "Interesting! Can you tell me a bit more?",
+        "And what happened next?",
+        "Why do you think that?",
+        "Can you give me a short example?"
+      ]
+    },
     "wrapup": {
       "description": "Summarize the class and give positive feedback.",
       "examples": [
@@ -92,6 +101,7 @@
     "guided_question": "Ask an open-ended question about the topic that requires explanation and opinion.",
     "correction": "Correct the student's last message in a friendly way. Explain briefly and give a natural example.",
     "expansion": "Ask a deeper follow-up question based on the student's last answer.",
+    "wrapup_continue": "Ask a short, simple follow-up question to keep the conversation going. Keep it brief and natural.",
     "wrapup": "Give positive feedback and summarize what the student practiced today."
   },
   "flow": {
