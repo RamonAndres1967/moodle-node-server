@@ -4,7 +4,7 @@
   "description": "",
   "main": "servernuevo5STT.js",
   "scripts": {
-    "start": "node servernuevo6STT.js"
+    "start": "node servernuevo7STT.js"
   },
   "keywords": [],
   "author": "",
