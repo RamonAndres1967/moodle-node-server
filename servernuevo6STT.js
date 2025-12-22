@@ -196,6 +196,7 @@ app.post("/chat", async (req, res) => {
       });
 
       const data = await openaiRes.json();
+      console.log("CHAT OpenAI response:", data);
       const reply = data.choices?.[0]?.message?.content || "Error";
 
       // Avanzar fase
