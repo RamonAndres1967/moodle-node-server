@@ -58,6 +58,7 @@ app.post("/stt", upload.single("audio"), async (req, res) => {
     });
 
     const data = await openaiRes.json();
+    console.log("STT OpenAI response:", data);
     fs.unlinkSync(filePath);
 
     res.json({ text: data.text || "" });
