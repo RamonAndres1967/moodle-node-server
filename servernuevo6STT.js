@@ -10,17 +10,15 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// ------------------ BASE DE DATOS PERSISTENTE ------------------
-// 🔥 NO crear /var/data manualmente → Render lo hace automáticamente
-const DB_PATH = "/var/data/usage.db";
+// ------------------ CARGAR GUION B1–B2 ------------------
+const script = JSON.parse(fs.readFileSync("./script_b1_b2.json", "utf8"));
 
-const db = new sqlite3.Database(DB_PATH, (err) => {
-  if (err) {
-    console.error("Error abriendo SQLite:", err);
-  } else {
-    console.log("SQLite cargado desde:", DB_PATH);
-  }
-});
+// Estado en memoria por usuario
+const sessions = {}; 
+// sessions[userId] = { phase, topic, questionIndex }
+
+// ------------------ BASE DE DATOS ------------------
+const db = new sqlite3.Database("usage.db");
 
 db.run(`
   CREATE TABLE IF NOT EXISTS usage (
@@ -35,7 +33,7 @@ function getToday() {
   return new Date().toISOString().split("T")[0];
 }
 
-const SESSION_LIMIT = 300; // 🔥 5 minutos
+const SESSION_LIMIT = 300; // 5 minutos
 
 // ------------------ MULTER ------------------
 const upload = multer({ dest: "uploads/" });
@@ -69,10 +67,100 @@ app.post("/stt", upload.single("audio"), async (req, res) => {
   }
 });
 
+// ------------------ MOTOR PEDAGÓGICO ------------------
+function initSession(userId) {
+  sessions[userId] = {
+    phase: "warmup",
+    topic: pickRandomTopic(),
+    questionIndex: 0
+  };
+}
+
+function pickRandomTopic() {
+  const keys = Object.keys(script.topics);
+  return keys[Math.floor(Math.random() * keys.length)];
+}
+
+function getPromptForPhase(userId, userMessage) {
+  const session = sessions[userId];
+  const phase = session.phase;
+
+  // 1. Warm-up
+  if (phase === "warmup") {
+    return script.prompts.warmup;
+  }
+
+  // 2. Introducción del tema
+  if (phase === "topic_intro") {
+    return `Introduce the topic: ${session.topic}`;
+  }
+
+  // 3. Preguntas guiadas
+  if (phase === "guided_questions") {
+    const questions = script.topics[session.topic].questions;
+    const q = questions[session.questionIndex];
+    return `Ask this question naturally: "${q}"`;
+  }
+
+  // 4. Corrección
+  if (phase === "correction") {
+    return `Correct the student's message in a friendly way. Explain briefly and give an example. Student said: "${userMessage}"`;
+  }
+
+  // 5. Expansión
+  if (phase === "expansion") {
+    return script.prompts.expansion;
+  }
+
+  // 6. Wrap-up
+  if (phase === "wrapup") {
+    return script.prompts.wrapup;
+  }
+}
+
+// Avance de fase
+function advancePhase(userId) {
+  const session = sessions[userId];
+
+  if (session.phase === "warmup") {
+    session.phase = "topic_intro";
+    return;
+  }
+
+  if (session.phase === "topic_intro") {
+    session.phase = "guided_questions";
+    return;
+  }
+
+  if (session.phase === "guided_questions") {
+    session.questionIndex++;
+    const total = script.topics[session.topic].questions.length;
+
+    if (session.questionIndex >= total) {
+      session.phase = "expansion";
+    }
+    return;
+  }
+
+  if (session.phase === "expansion") {
+    session.phase = "wrapup";
+    return;
+  }
+
+  if (session.phase === "wrapup") {
+    // Reiniciar para siguiente clase
+    initSession(userId);
+    return;
+  }
+}
+
 // ------------------ RUTA CHAT ------------------
 app.post("/chat", async (req, res) => {
   const { userId, message } = req.body;
   const today = getToday();
+
+  // Crear sesión si no existe
+  if (!sessions[userId]) initSession(userId);
 
   db.get(
     "SELECT seconds FROM usage WHERE userId = ? AND date = ?",
@@ -87,6 +175,9 @@ app.post("/chat", async (req, res) => {
         });
       }
 
+      // Construir prompt según fase
+      const prompt = getPromptForPhase(userId, message);
+
       const openaiRes = await fetch("https://api.openai.com/v1/chat/completions", {
         method: "POST",
         headers: {
@@ -95,17 +186,22 @@ app.post("/chat", async (req, res) => {
         },
         body: JSON.stringify({
           model: "gpt-4.1",
+          max_tokens: 120,
           messages: [
-            { role: "system", content: "You are an English teacher." },
+            { role: "system", content: prompt },
             { role: "user", content: message }
           ]
         })
       });
 
       const data = await openaiRes.json();
+      const reply = data.choices?.[0]?.message?.content || "Error";
+
+      // Avanzar fase
+      advancePhase(userId);
 
       res.json({
-        reply: data.choices?.[0]?.message?.content || "Error",
+        reply,
         timeSpentToday: used
       });
     }
@@ -130,30 +226,6 @@ app.post("/ttsTime", (req, res) => {
       );
 
       res.json({ ok: true, total: newTotal });
-    }
-  );
-});
-
-// ------------------ ENDPOINT ADMIN: VER USO DE TODOS LOS ALUMNOS ------------------
-app.get("/admin/usage", (req, res) => {
-  const today = getToday();
-
-  db.all(
-    "SELECT userId, seconds FROM usage WHERE date = ? ORDER BY seconds DESC",
-    [today],
-    (err, rows) => {
-      if (err) {
-        console.error(err);
-        return res.status(500).json({ error: "Database error" });
-      }
-
-      const result = rows.map(r => ({
-        userId: r.userId,
-        usedSeconds: Math.floor(r.seconds),
-        remainingSeconds: Math.max(300 - Math.floor(r.seconds), 0)
-      }));
-
-      res.json(result);
     }
   );
 });
