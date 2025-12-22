@@ -1,0 +1,114 @@
+{
+  "level": "B1-B2",
+  "phases": {
+    "warmup": {
+      "description": "Activate fluency and get the student talking.",
+      "examples": [
+        "How has your week been so far?",
+        "What’s something interesting that happened recently?",
+        "What are you working on these days?"
+      ]
+    },
+    "topic_intro": {
+      "description": "Introduce the topic of the day.",
+      "examples": [
+        "Today we’ll talk about technology.",
+        "Today’s topic is travel and memorable experiences.",
+        "Let’s talk about work and career development."
+      ]
+    },
+    "guided_questions": {
+      "description": "Ask open-ended questions that require explanation and opinion.",
+      "min_questions": 3,
+      "max_questions": 6
+    },
+    "correction": {
+      "description": "Correct the student's mistakes in a friendly and concise way.",
+      "style": "brief, positive, with an example"
+    },
+    "expansion": {
+      "description": "Ask deeper follow-up questions to push the student to B2-level thinking.",
+      "examples": [
+        "Can you give an example?",
+        "Why do you think that?",
+        "How would you solve that problem?",
+        "What are the pros and cons?"
+      ]
+    },
+    "wrapup": {
+      "description": "Summarize the class and give positive feedback.",
+      "examples": [
+        "Great job today. You practiced expressing opinions and giving examples.",
+        "Today you improved your fluency and vocabulary about the topic.",
+        "Next time we can explore a related topic."
+      ]
+    }
+  },
+  "topics": {
+    "technology": {
+      "questions": [
+        "What piece of technology do you use the most, and why?",
+        "How has technology changed the way you communicate?",
+        "Do you think technology makes life easier or more stressful?",
+        "What technological innovation do you think will be important in the future?"
+      ]
+    },
+    "travel": {
+      "questions": [
+        "What’s the most memorable trip you’ve taken?",
+        "Do you prefer traveling alone or with others?",
+        "How does travel change your perspective?",
+        "What destination would you like to visit next, and why?"
+      ]
+    },
+    "work": {
+      "questions": [
+        "What skills are essential in your job?",
+        "How do you stay motivated at work?",
+        "What would your ideal job look like?",
+        "How has your profession changed in the last few years?"
+      ]
+    },
+    "social_media": {
+      "questions": [
+        "How does social media influence your daily life?",
+        "Do you think social media is more positive or negative for society?",
+        "How do you manage your time on social platforms?",
+        "What changes would you make to improve social media?"
+      ]
+    },
+    "environment": {
+      "questions": [
+        "What environmental issues worry you the most?",
+        "What can individuals do to help the environment?",
+        "How has climate change affected your country?",
+        "Do you think governments are doing enough to protect the planet?"
+      ]
+    }
+  },
+  "prompts": {
+    "warmup": "Ask the student a warm-up question about their day or week. Keep it simple and friendly.",
+    "topic_intro": "Introduce the topic of the day in a natural and engaging way.",
+    "guided_question": "Ask an open-ended question about the topic that requires explanation and opinion.",
+    "correction": "Correct the student's last message in a friendly way. Explain briefly and give a natural example.",
+    "expansion": "Ask a deeper follow-up question based on the student's last answer.",
+    "wrapup": "Give positive feedback and summarize what the student practiced today."
+  },
+  "flow": {
+    "start_phase": "warmup",
+    "order": [
+      "warmup",
+      "topic_intro",
+      "guided_questions",
+      "correction",
+      "expansion",
+      "wrapup"
+    ],
+    "rules": {
+      "warmup_to_topic_intro": "After 1 warm-up question and student response.",
+      "topic_intro_to_guided_questions": "Immediately after introducing the topic.",
+      "guided_questions_to_expansion": "After 3–6 guided questions.",
+      "expansion_to_wrapup": "After 1–2 deeper follow-up questions."
+    }
+  }
+}
