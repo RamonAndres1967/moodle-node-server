@@ -126,7 +126,7 @@ function advancePhase(ip) {
   console.log(`➡️ IP ${ip} avanza a fase: ${session.phase}`);
 }
 
-// ------------------ RUTA CHAT (SOLO IP) ------------------
+// ------------------ RUTA CHAT (SOLO IP + CORRECCIÓN SIEMPRE) ------------------
 app.post("/chat", async (req, res) => {
   const { message, history } = req.body;
 
@@ -154,8 +154,17 @@ app.post("/chat", async (req, res) => {
         });
       }
 
-      const prompt = getPromptForPhase(ip, message);
-      console.log("🧠 Prompt pedagógico:", prompt);
+      const phasePrompt = getPromptForPhase(ip, message);
+      console.log("🧠 Prompt pedagógico:", phasePrompt);
+
+      // 🔥 Prompt híbrido: corrección SIEMPRE + fase pedagógica
+      const systemPrompt = `
+You are an English tutor.
+Always correct the student's grammar, vocabulary, and pronunciation mistakes FIRST.
+Keep corrections brief and friendly.
+After correcting, continue with the pedagogical task of the current phase.
+Current phase instructions: ${phasePrompt}
+`;
 
       // Construir historial
       let historyMessages = [];
@@ -169,7 +178,7 @@ app.post("/chat", async (req, res) => {
       console.log("📚 Historial enviado a OpenAI:", historyMessages);
 
       const messages = [
-        { role: "system", content: prompt },
+        { role: "system", content: systemPrompt },
         ...historyMessages,
         { role: "user", content: message }
       ];
