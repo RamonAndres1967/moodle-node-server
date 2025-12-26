@@ -75,6 +75,8 @@ function initSession(userId) {
     topic: pickRandomTopic(),
     questionIndex: 0
   };
+
+  console.log(`🆕 Nueva sesión creada para ${userId} → Tema: ${sessions[userId].topic}`);
 }
 
 function pickRandomTopic() {
@@ -86,12 +88,15 @@ function getPromptForPhase(userId, userMessage) {
   const session = sessions[userId];
   const phase = session.phase;
 
+  console.log(`📌 Fase actual de ${userId}: ${phase}`);
+
   if (phase === "warmup") return script.prompts.warmup;
   if (phase === "topic_intro") return `Introduce the topic: ${session.topic}`;
 
   if (phase === "guided_questions") {
     const questions = script.topics[session.topic].questions;
     const q = questions[session.questionIndex];
+    console.log(`❓ Pregunta guiada para ${userId}: ${q}`);
     return `Ask this question naturally: "${q}"`;
   }
 
@@ -115,12 +120,19 @@ function advancePhase(userId) {
   }
   else if (session.phase === "expansion") session.phase = "wrapup";
   else if (session.phase === "wrapup") initSession(userId);
+
+  console.log(`➡️ Usuario ${userId} avanza a fase: ${session.phase}`);
 }
 
-// ------------------ RUTA CHAT (MODIFICADA) ------------------
+// ------------------ RUTA CHAT (CON LOGS) ------------------
 app.post("/chat", async (req, res) => {
-  const { userId, message, history } = req.body; // 🔥 ahora recibimos history
+  const { userId, message, history } = req.body;
   const today = getToday();
+
+  console.log("📥 /chat fue llamado");
+  console.log("👤 Usuario:", userId);
+  console.log("💬 Mensaje del alumno:", message);
+  console.log("📜 Historial recibido:", history);
 
   if (!sessions[userId]) initSession(userId);
 
@@ -130,7 +142,10 @@ app.post("/chat", async (req, res) => {
     async (err, row) => {
       const used = row?.seconds || 0;
 
+      console.log(`⏱ Tiempo usado hoy por ${userId}: ${used}s`);
+
       if (used >= SESSION_LIMIT) {
+        console.log("⛔ Límite diario alcanzado");
         return res.json({
           reply: "You have reached your 5‑minute practice limit for today.",
           timeSpentToday: used
@@ -138,8 +153,9 @@ app.post("/chat", async (req, res) => {
       }
 
       const prompt = getPromptForPhase(userId, message);
+      console.log("🧠 Prompt pedagógico enviado a OpenAI:", prompt);
 
-      // ---------- 🔥 Construir mensajes con los 3 últimos turnos ----------
+      // ---------- Construir mensajes con historial ----------
       let historyMessages = [];
 
       if (Array.isArray(history)) {
@@ -149,11 +165,15 @@ app.post("/chat", async (req, res) => {
         });
       }
 
+      console.log("📚 Mensajes enviados a OpenAI:", historyMessages);
+
       const messages = [
         { role: "system", content: prompt },
         ...historyMessages,
         { role: "user", content: message }
       ];
+
+      console.log("🚀 Payload final enviado a OpenAI:", messages);
 
       const openaiRes = await fetch("https://api.openai.com/v1/chat/completions", {
         method: "POST",
@@ -170,6 +190,8 @@ app.post("/chat", async (req, res) => {
 
       const data = await openaiRes.json();
       const reply = data.choices?.[0]?.message?.content || "Error";
+
+      console.log("🤖 Respuesta generada por OpenAI:", reply);
 
       advancePhase(userId);
 
@@ -192,6 +214,8 @@ app.post("/ttsTime", (req, res) => {
     (err, row) => {
       const previous = row?.seconds || 0;
       const newTotal = previous + seconds;
+
+      console.log(`🔊 TTS sumado para ${userId}: +${seconds}s → total ${newTotal}s`);
 
       db.run(
         "INSERT OR REPLACE INTO usage (userId, date, seconds) VALUES (?, ?, ?)",
