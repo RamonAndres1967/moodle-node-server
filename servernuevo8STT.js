@@ -1,4 +1,130 @@
-// ------------------ RUTA CHAT (LIMITACIÓN SOLO POR IP) ------------------
+import express from "express";
+import multer from "multer";
+import fs from "fs";
+import fetch from "node-fetch";
+import sqlite3 from "sqlite3";
+import cors from "cors";
+import FormData from "form-data";
+
+const app = express();
+app.use(cors());
+app.use(express.json());
+
+// ------------------ CARGAR GUION B1–B2 ------------------
+const script = JSON.parse(fs.readFileSync("./script_b1_b2.json", "utf8"));
+
+// Estado en memoria por IP
+const sessions = {}; 
+// sessions[ip] = { phase, topic, questionIndex }
+
+// ------------------ BASE DE DATOS ------------------
+const db = new sqlite3.Database("usage.db");
+
+db.run(`
+  CREATE TABLE IF NOT EXISTS usage (
+    ip TEXT,
+    date TEXT,
+    seconds REAL,
+    PRIMARY KEY (ip, date)
+  )
+`);
+
+function getToday() {
+  return new Date().toISOString().split("T")[0];
+}
+
+const SESSION_LIMIT = 300; // 5 minutos
+
+// ------------------ MULTER ------------------
+const upload = multer({ dest: "uploads/" });
+
+// ------------------ RUTA STT ------------------
+app.post("/stt", upload.single("audio"), async (req, res) => {
+  try {
+    if (!req.file) return res.json({ text: "" });
+
+    const filePath = req.file.path;
+
+    const formData = new FormData();
+    formData.append("file", fs.createReadStream(filePath), {
+      filename: "audio.webm",
+      contentType: "audio/webm"
+    });
+    formData.append("model", "whisper-1");
+    formData.append("language", "en");
+
+    const openaiRes = await fetch("https://api.openai.com/v1/audio/transcriptions", {
+      method: "POST",
+      headers: { Authorization: `Bearer ${process.env.OPENAI_API_KEY}` },
+      body: formData
+    });
+
+    const data = await openaiRes.json();
+    fs.unlinkSync(filePath);
+
+    res.json({ text: data.text || "" });
+  } catch (err) {
+    res.json({ text: "" });
+  }
+});
+
+// ------------------ MOTOR PEDAGÓGICO ------------------
+function initSession(ip) {
+  sessions[ip] = {
+    phase: "warmup",
+    topic: pickRandomTopic(),
+    questionIndex: 0
+  };
+
+  console.log(`🆕 Nueva sesión creada para IP ${ip} → Tema: ${sessions[ip].topic}`);
+}
+
+function pickRandomTopic() {
+  const keys = Object.keys(script.topics);
+  return keys[Math.floor(Math.random() * keys.length)];
+}
+
+function getPromptForPhase(ip, userMessage) {
+  const session = sessions[ip];
+  const phase = session.phase;
+
+  console.log(`📌 Fase actual de IP ${ip}: ${phase}`);
+
+  if (phase === "warmup") return script.prompts.warmup;
+  if (phase === "topic_intro") return `Introduce the topic: ${session.topic}`;
+
+  if (phase === "guided_questions") {
+    const questions = script.topics[session.topic].questions;
+    const q = questions[session.questionIndex];
+    console.log(`❓ Pregunta guiada para IP ${ip}: ${q}`);
+    return `Ask this question naturally: "${q}"`;
+  }
+
+  if (phase === "correction") {
+    return `Correct the student's message in a friendly way. Explain briefly and give an example. Student said: "${userMessage}"`;
+  }
+
+  if (phase === "expansion") return script.prompts.expansion;
+  if (phase === "wrapup") return script.prompts.wrapup;
+}
+
+function advancePhase(ip) {
+  const session = sessions[ip];
+
+  if (session.phase === "warmup") session.phase = "topic_intro";
+  else if (session.phase === "topic_intro") session.phase = "guided_questions";
+  else if (session.phase === "guided_questions") {
+    session.questionIndex++;
+    const total = script.topics[session.topic].questions.length;
+    if (session.questionIndex >= total) session.phase = "expansion";
+  }
+  else if (session.phase === "expansion") session.phase = "wrapup";
+  else if (session.phase === "wrapup") initSession(ip);
+
+  console.log(`➡️ IP ${ip} avanza a fase: ${session.phase}`);
+}
+
+// ------------------ RUTA CHAT (SOLO IP) ------------------
 app.post("/chat", async (req, res) => {
   const { message, history } = req.body;
 
@@ -8,7 +134,6 @@ app.post("/chat", async (req, res) => {
 
   const today = getToday();
 
-  // Crear sesión si no existe (solo para fases pedagógicas)
   if (!sessions[ip]) initSession(ip);
 
   db.get(
@@ -102,3 +227,6 @@ app.post("/ttsTime", (req, res) => {
     }
   );
 });
+
+// ------------------ INICIAR SERVIDOR ------------------
+app.listen(3000, () => console.log("🚀 Servidor listo en puerto 3000"));
