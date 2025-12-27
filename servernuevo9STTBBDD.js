@@ -158,7 +158,7 @@ app.post("/chat", async (req, res) => {
   // 🔥 Prompt híbrido: corrección SIEMPRE + fase pedagógica
   const systemPrompt = `
 You are an English tutor.
-Correct the student's grammar, vocabulary, and pronunciation mistakes FIRST.
+Correct the student's grammar, vocabulary, and pronunciation mistakes FIRST.if needed
 Keep corrections brief and friendly.
 After correcting, continue with the pedagogical task of the current phase.
 Current phase instructions: ${phasePrompt}
