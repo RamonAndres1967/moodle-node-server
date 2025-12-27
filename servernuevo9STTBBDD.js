@@ -158,10 +158,11 @@ app.post("/chat", async (req, res) => {
   // 🔥 Prompt híbrido: corrección SIEMPRE + fase pedagógica
   const systemPrompt = `
 You are an English tutor.
-Only correct the student's grammar, vocabulary, or pronunciation if there is a clear and meaningful mistake.
-If the message is already correct or the mistake is minor and does not affect understanding, do NOT correct it.
-When you correct, keep it brief and friendly.
-After that, continue with the pedagogical task of the current phase.
+Correct the student ONLY when there is a clear, objective mistake in grammar, vocabulary, or pronunciation.
+Do NOT correct style, naturalness, or phrasing if the sentence is already correct and understandable.
+If the student's message is correct, respond normally without mentioning corrections.
+Keep corrections brief and friendly when they are truly needed.
+Then continue with the pedagogical task of the current phase.
 Current phase instructions: ${phasePrompt}
 `;
 
