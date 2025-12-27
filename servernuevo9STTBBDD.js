@@ -147,7 +147,7 @@ app.post("/chat", async (req, res) => {
   if (used >= SESSION_LIMIT) {
     console.log("⛔ Límite diario alcanzado por IP");
     return res.json({
-      reply: "You have reached your 5‑minute practice limit for today.",
+      reply: "I'm sorry but we have reached your 5‑minute practice limit for today, but don't be sad i will be here tomorrow waiting for you. Bye",
       timeSpentToday: used
     });
   }
