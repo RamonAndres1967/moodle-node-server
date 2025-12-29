@@ -1,40 +1,69 @@
 {
   "level": "B1-B2",
+
+  "persona": {
+    "name": "Brenda",
+    "tone": "friendly, supportive, natural",
+    "style": "conversational, encouraging, clear",
+    "encouragement": [
+      "Nice answer!",
+      "You're expressing your ideas very clearly.",
+      "Good job — that sounded natural.",
+      "Great! Keep going.",
+      "I like how you explained that."
+    ]
+  },
+
+  "fallback": [
+    "Take your time. What do you think?",
+    "No worries — just say the first thing that comes to mind.",
+    "Let me help you: think about your last experience with this topic.",
+    "You can give a short answer if you prefer."
+  ],
+
   "phases": {
     "warmup": {
       "description": "Activate fluency and get the student talking.",
       "examples": [
         "How has your week been so far?",
         "What’s something interesting that happened recently?",
-        "What are you working on these days?"
+        "What are you working on these days?",
+        "How are you feeling today?",
+        "What did you do earlier today?"
       ]
     },
+
     "topic_intro": {
-      "description": "Introduce the topic of the day.",
+      "description": "Introduce the topic of the day in a natural way.",
       "examples": [
-        "Today we’ll talk about technology.",
-        "Today’s topic is travel and memorable experiences.",
-        "Let’s talk about work and career development."
+        "Today we’ll talk about a topic many people enjoy.",
+        "Let’s explore something interesting today.",
+        "I’d like to talk about a topic that affects our daily lives."
       ]
     },
+
     "guided_questions": {
       "description": "Ask open-ended questions that require explanation and opinion.",
       "min_questions": 3,
       "max_questions": 6
     },
+
     "correction": {
       "description": "Correct the student's mistakes in a friendly and concise way.",
       "style": "brief, positive, with an example"
     },
+
     "expansion": {
       "description": "Ask deeper follow-up questions to push the student to B2-level thinking.",
-      "examples": [
+      "generic_examples": [
         "Can you give an example?",
         "Why do you think that?",
         "How would you solve that problem?",
-        "What are the pros and cons?"
+        "What are the pros and cons?",
+        "How does this affect people in general?"
       ]
     },
+
     "wrapup_continue": {
       "description": "Keep the conversation going with short, simple follow-up questions when time remains.",
       "examples": [
@@ -44,6 +73,7 @@
         "Can you give me a short example?"
       ]
     },
+
     "wrapup": {
       "description": "Summarize the class and give positive feedback.",
       "examples": [
@@ -53,48 +83,204 @@
       ]
     }
   },
+
   "topics": {
     "technology": {
+      "intro": "Today we’ll talk about how technology shapes your daily life.",
       "questions": [
-        "What piece of technology do you use the most, and why?",
-        "How has technology changed the way you communicate?",
-        "Do you think technology makes life easier or more stressful?",
-        "What technological innovation do you think will be important in the future?"
+        {
+          "q": "What piece of technology do you use the most, and why?",
+          "alt": [
+            "Which device do you rely on the most in your daily life?",
+            "What technology could you not live without?"
+          ]
+        },
+        {
+          "q": "How has technology changed the way you communicate?",
+          "alt": [
+            "In what ways has communication improved thanks to technology?",
+            "How different would communication be without modern devices?"
+          ]
+        },
+        {
+          "q": "Do you think technology makes life easier or more stressful?",
+          "alt": [
+            "Does technology simplify your life or complicate it?",
+            "Do you feel technology reduces or increases stress?"
+          ]
+        },
+        {
+          "q": "What technological innovation do you think will be important in the future?",
+          "alt": [
+            "Which future technology excites you the most?",
+            "What invention do you think will change society?"
+          ]
+        }
+      ],
+      "expansion": [
+        "How do you think technology will change education in the next 10 years?",
+        "Do you believe people depend too much on technology?",
+        "What ethical concerns do you have about artificial intelligence?"
       ]
     },
+
     "travel": {
+      "intro": "Let’s talk about travel and memorable experiences.",
       "questions": [
-        "What’s the most memorable trip you’ve taken?",
-        "Do you prefer traveling alone or with others?",
-        "How does travel change your perspective?",
-        "What destination would you like to visit next, and why?"
+        {
+          "q": "What’s the most memorable trip you’ve taken?",
+          "alt": [
+            "Tell me about a trip you’ll never forget.",
+            "What was a special travel experience for you?"
+          ]
+        },
+        {
+          "q": "Do you prefer traveling alone or with others?",
+          "alt": [
+            "Do you enjoy solo travel or group travel more?",
+            "Who do you usually travel with?"
+          ]
+        },
+        {
+          "q": "How does travel change your perspective?",
+          "alt": [
+            "What have you learned from travelling?",
+            "How has travel influenced the way you see the world?"
+          ]
+        },
+        {
+          "q": "What destination would you like to visit next, and why?",
+          "alt": [
+            "Where would you love to go in the future?",
+            "What’s your dream travel destination?"
+          ]
+        }
+      ],
+      "expansion": [
+        "How does tourism impact local communities?",
+        "Do you think travel should be more environmentally friendly?",
+        "What cultural differences have surprised you during your trips?"
       ]
     },
+
     "work": {
+      "intro": "Today’s topic is work and career development.",
       "questions": [
-        "What skills are essential in your job?",
-        "How do you stay motivated at work?",
-        "What would your ideal job look like?",
-        "How has your profession changed in the last few years?"
+        {
+          "q": "What skills are essential in your job?",
+          "alt": [
+            "Which abilities help you the most at work?",
+            "What skills do you use every day?"
+          ]
+        },
+        {
+          "q": "How do you stay motivated at work?",
+          "alt": [
+            "What helps you stay productive?",
+            "How do you keep yourself motivated?"
+          ]
+        },
+        {
+          "q": "What would your ideal job look like?",
+          "alt": [
+            "If you could design your perfect job, what would it be like?",
+            "What is your dream job?"
+          ]
+        },
+        {
+          "q": "How has your profession changed in the last few years?",
+          "alt": [
+            "What changes have you noticed in your field?",
+            "How has your job evolved recently?"
+          ]
+        }
+      ],
+      "expansion": [
+        "Do you think remote work is the future?",
+        "How important is work-life balance for you?",
+        "What career goals do you have for the next few years?"
       ]
     },
+
     "social_media": {
+      "intro": "Let’s talk about social media and its impact on daily life.",
       "questions": [
-        "How does social media influence your daily life?",
-        "Do you think social media is more positive or negative for society?",
-        "How do you manage your time on social platforms?",
-        "What changes would you make to improve social media?"
+        {
+          "q": "How does social media influence your daily life?",
+          "alt": [
+            "How much time do you spend on social media?",
+            "How does social media affect your routine?"
+          ]
+        },
+        {
+          "q": "Do you think social media is more positive or negative for society?",
+          "alt": [
+            "What are the pros and cons of social media?",
+            "Do you think social media helps or harms people?"
+          ]
+        },
+        {
+          "q": "How do you manage your time on social platforms?",
+          "alt": [
+            "Do you set limits for social media use?",
+            "How do you avoid spending too much time online?"
+          ]
+        },
+        {
+          "q": "What changes would you make to improve social media?",
+          "alt": [
+            "If you could redesign social media, what would you change?",
+            "What improvements do you think social platforms need?"
+          ]
+        }
+      ],
+      "expansion": [
+        "How does social media affect mental health?",
+        "Do you think influencers have too much power?",
+        "How can people use social media more responsibly?"
       ]
     },
+
     "environment": {
+      "intro": "Today we’ll talk about the environment and sustainability.",
       "questions": [
-        "What environmental issues worry you the most?",
-        "What can individuals do to help the environment?",
-        "How has climate change affected your country?",
-        "Do you think governments are doing enough to protect the planet?"
+        {
+          "q": "What environmental issues worry you the most?",
+          "alt": [
+            "Which environmental problems concern you?",
+            "What ecological issues do you think are most urgent?"
+          ]
+        },
+        {
+          "q": "What can individuals do to help the environment?",
+          "alt": [
+            "What small actions can people take to protect the planet?",
+            "How can we reduce our environmental impact?"
+          ]
+        },
+        {
+          "q": "How has climate change affected your country?",
+          "alt": [
+            "Have you noticed any climate changes where you live?",
+            "How is your region affected by climate change?"
+          ]
+        },
+        {
+          "q": "Do you think governments are doing enough to protect the planet?",
+          "alt": [
+            "Should governments take stronger action on climate issues?",
+            "Do you think environmental policies are effective?"
+          ]
+        }
+      ],
+      "expansion": [
+        "What long-term solutions do you think are necessary?",
+        "How can companies reduce their environmental footprint?",
+        "Do you think environmental education should be mandatory?"
       ]
     }
   },
+
   "prompts": {
     "warmup": "Ask the student a warm-up question about their day or week. Keep it simple and friendly.",
     "topic_intro": "Introduce the topic of the day in a natural and engaging way.",
@@ -104,6 +290,7 @@
     "wrapup_continue": "Ask a short, simple follow-up question to keep the conversation going. Keep it brief and natural.",
     "wrapup": "Give positive feedback and summarize what the student practiced today."
   },
+
   "flow": {
     "start_phase": "warmup",
     "order": [
@@ -119,6 +306,9 @@
       "topic_intro_to_guided_questions": "Immediately after introducing the topic.",
       "guided_questions_to_expansion": "After 3–6 guided questions.",
       "expansion_to_wrapup": "After 1–2 deeper follow-up questions."
+    },
+    "rotation": {
+      "avoid_repeating_last_topic": true
     }
   }
 }
