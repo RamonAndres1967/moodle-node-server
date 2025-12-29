@@ -124,11 +124,11 @@ function advancePhase(ip) {
 
 // ------------------ RUTA CHAT (con antifraude IP + userId) ------------------
 app.post("/chat", async (req, res) => {
-  const { message, history, firstname, lastname, userId } = req.body;
+  const { message, history, firstname, lastname, userId,email } = req.body;
   // --- Guardar o actualizar datos del usuario --- 
- // await supabase 
-  //  .from("users") 
-   // .upsert({ userId, firstname, lastname, email });
+  await supabase 
+    .from("users") 
+    .upsert({ userId, firstname, lastname, email });
 
   // IP real del usuario
   const ip = req.headers["x-forwarded-for"]?.split(",")[0] || req.ip;
