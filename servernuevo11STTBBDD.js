@@ -348,6 +348,7 @@ app.post("/ttsTime", async (req, res) => {
       .from("usage")
       .upsert({
         userId: effectiveUserId,
+        ip: ip || null,
         date: today,
         seconds: newTotal
       });
